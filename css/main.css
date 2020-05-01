@@ -33,13 +33,13 @@ body {
 }
 input[type="radio"], #result {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
- 
+
 }
 #result {
  color: var(--mainGreen);
- text-transform: uppercase; 
+ text-transform: uppercase;
  font-weight: 600;
 }
 
@@ -109,12 +109,14 @@ input[type="radio"], #result {
   font-size: 1.6rem;
   color: var(--mainRed);
 }
-.balance {
+.balance,
+.savings {
   font-size: 1.6rem;
 }
 .budget-icon,
 .expense-icon,
-.balance-icon {
+.balance-icon,
+.savings-icon {
   font-size: 2.5rem;
   color: var(--mainBlue);
 }
@@ -136,17 +138,19 @@ input[type="radio"], #result {
     font-size: 2.6rem;
     color: var(--mainRed);
   }
-  .balance {
+  .balance,
+  .savings {
     font-size: 2.6rem;
   }
   .budget-icon,
   .expense-icon,
-  .balance-icon {
+  .balance-icon,
+  .savings-icon {
     font-size: 3.5rem;
     color: var(--mainBlue);
   }
 
-  
+
 }
 .list-item {
   flex: 0 0 33.33%;
