@@ -8,15 +8,15 @@ class UI {
     this.expenseAmount = document.getElementById("expense-amount");
     this.balance = document.getElementById("balance");
 
-    // theses are the saving section  variables. // 
+    // theses are the saving section  variables. //
 
     this.savingsForm = document.getElementById("savingsForm"); // savings <form id>
-    this.savingsButton = document.getElementById("savings-button"); // savings form button to submit 
-    this.percent = document.getElementsByClassName("percent"); // saving percentage to calculate 
+    this.savingsButton = document.getElementById("savings-button"); // savings form button to submit
+    this.percent = document.getElementsByClassName("percent"); // saving percentage to calculate
     this.result = document.getElementById("result");
-    this.savingsAmount = document.getElementById("savings-amount"); // savings icon 
-     //   //   //  /// /// // // //  
+     //   //   //  /// /// // // //
 
+    this.savingsAmount = document.getElementById("savings-amount");
     this.balanceAmount = document.getElementById("balance-amount");
     this.expenseForm = document.getElementById("expense-form");
     this.expenseInput = document.getElementById("expense-input");
@@ -25,14 +25,15 @@ class UI {
     this.itemList = [];
     this.itemID = 0;
   }
-  //submit budget method 
+
+  //submit budget method
   submitBudgetForm(){
     const value = this.budgetInput.value;
     if(value === "" || value < 0) {
       this.budgetFeedback.classList.add("showItem");
       this.budgetFeedback.innerHTML = `<p>value cannot be empy or negative</p>`;
       const self = this;
-      
+
       setTimeout(function(){
         self.budgetFeedback.classList.remove("showItem");
       }, 4000);
@@ -41,57 +42,58 @@ class UI {
       this.budgetAmount.textContent = value;
       this.budgetInput.value = "";
       this.showBalance();
- 
+
     }
   }
 
-  
-// submit savings form 
 
-displaySavingsValue() { 
- 
-  const Savingsbtn = document.querySelector('#savings-button');
-  // handle click button
-  Savingsbtn.onclick = function () {
-      const rbs = document.querySelectorAll('input[name="percent"]');
-      let selectedValue;
-      for (const rb of rbs) {
-          if (rb.checked) {
-              selectedValue = rb.value;
-              break;
-          }
-      }// selectedValue is typeof "string" , need to convert to NUMBER  than apply caluclation;   **:) did that already (  const decimalValue  ) 
-        // to find percentage of a number , divide the number by 100 .  -- (  const divided  ) 
+  // submit savings form
+  displaySavingsValue() {
 
-      const decimalValue = Number(selectedValue); 
-      const divided = decimalValue/ 100; 
+    const Savingsbtn = document.querySelector('#savings-button');
+    // handle click button
+    console.log('this ??', this)
+    const self = this;
+    Savingsbtn.onclick = function () {
+        const rbs = document.querySelectorAll('input[name="percent"]');
+        let selectedValue;
+        for (const rb of rbs) {
+            if (rb.checked) {
+                selectedValue = rb.value;
+                break;
+            }
+        }// selectedValue is typeof "string" , need to convert to NUMBER  than apply caluclation;   **:) did that already (  const decimalValue  )
+          // to find percentage of a number , divide the number by 100 .  -- (  const divided  )
 
-      //  savings total number under savings ICON -- // 
+        const decimalValue = Number(selectedValue);
+        const divided = decimalValue / 100;
 
-      //Get whatever the current BALANCE number is and apply percentage selected by user 10,15 or 20%, to return the percentage of the balance . 
-      const balance = document.getElementById("balance-amount"); 
-      const value = balance.textContent;
-      const BNum = Number(value);
+        //  savings total number under savings ICON -- //
 
-      
-      
-      alert(BNum);
-     
-      
-      alert(divided); // alert percentage selected  , in decimal form 
+        //Get whatever the current BALANCE number is and apply percentage selected by user 10,15 or 20%, to return the percentage of the balance .
+        const balance = document.getElementById("balance-amount");
+        const value = balance.textContent;
+        const BNum = Number(value);
 
+        // just need to multiply the number value of balance by the savings rate.
+        const savingsAmount = BNum * divided;
 
-  };
-
-          
+        // same reason you captured your this above -- your `this` value isn't what you think. make sure to capture this outside the click handler.
+        // or use arrow functions (coouple exaples below)
+        console.log('savingsAmount --', savingsAmount)
+        self.savingsAmount.textContent = savingsAmount;
+        self.balanceAmount.textContent -= savingsAmount;
+    };
   }
 
 
 
-//show Balance 
+//show Balance
 showBalance(){
   const expense = this.totalExpense();
-  const total = parseInt(this.budgetAmount.textContent) - expense;
+  const savings = this.savingsAmount.textContent;
+  console.log('savings -', savings)
+  const total = parseInt(this.budgetAmount.textContent) - expense - savings;
   this.balanceAmount.textContent = total;
   if(total < 0){
     this.balance.classList.remove('showGreen', 'showBlack');
@@ -105,22 +107,26 @@ showBalance(){
     this.balance.classList.remove('showRed', 'showGreen');
     this.balance.classList.add('showBlack');
   }
-} 
-// submit expense form // 
-submitExpenseForm(){
+}
+// submit expense form //
+// changing this to use arrow functions will give you lexical scope;
+// this gives you the benefit of not having to reassing your this value.
+submitExpenseForm = () => {
   const expenseValue = this.expenseInput.value;
   const amountValue = this.amountInput.value;
+  console.log('amountValue ??', amountValue)
   if(expenseValue === '' || amountValue === '' || amountValue < 0){
     this.expenseFeedback.classList.add('showItem');
     this.expenseFeedback.innerHTML = `<p>values cannot be negative</p>`
-    const self = this;
+    // const self = this;
     setTimeout(function(){
-      self.expenseFeedback.classList.remove('showItem');
+      this.expenseFeedback.classList.remove('showItem');
     }, 4000);
   }
   else{
     let amount = parseInt(amountValue);
     this.expenseInput.value = '';
+    console.log('this.expenseInput.value ---', this.expenseInput.value)
     this.amountInput.value = '';
 
     let expense = {
@@ -133,11 +139,11 @@ submitExpenseForm(){
     this.addExpense(expense);
     this.showBalance();
     alert("New Expense added successfully!");
-    // show balance 
+    // show balance
   }
 }
 // add expense
-addExpense(expense){
+addExpense = (expense) => {
   const div = document.createElement("div");
   div.classList.add("expense");
   div.innerHTML = `
@@ -157,7 +163,7 @@ addExpense(expense){
          </div>
         </div>
 
-       </div> 
+       </div>
   `;
   this.expenseList.appendChild(div);
 }
@@ -177,36 +183,36 @@ totalExpense(){
   this.expenseAmount.textContent = total;
     return total;
   }
-  // edit expense 
+  // edit expense
   editExpense(element){
     let id = parseInt(element.dataset.id);
     let parent = element.parentElement.parentElement.parentElement;
-    //remove from dom 
+    //remove from dom
     this.expenseList.removeChild(parent);
-    // from the list 
+    // from the list
     let expense = this.itemList.filter(function(item){
       return item.id === id;
     });
     //show value
     this.expenseInput.value = expense[0].title;
     this.amountInput.value = expense[0].amount;
-    //remove from the list 
+    //remove from the list
     let tempList = this.itemList.filter(function(item){
       return item.id !==id;
     });
     this.itemList = tempList;
     this.showBalance();
   }
-  // delete expense 
+  // delete expense
   deleteExpense(element){
     let id = parseInt(element.dataset.id);
     let parent = element.parentElement.parentElement.parentElement;
-    //remove from dom 
+    //remove from dom
     this.expenseList.removeChild(parent);
-    // from the list 
+    // from the list
     this.expenseInput.value = expense[0].title;
     this.amountInput.value = expense[0].amount;
-    //remove from the list 
+    //remove from the list
     let tempList = this.itemList.filter(function(item){
       return item.id !==id;
     });
@@ -221,23 +227,23 @@ function eventListeners(){
   const budgetForm = document.getElementById('budget-form');
   const expenseForm = document.getElementById('expense-form');
   const expenseList = document.getElementById('expense-list');
-  const savingsForm = document.getElementById("savingsForm"); 
+  const savingsForm = document.getElementById("savingsForm");
 
-  // new instance of UI CLASS 
+  // new instance of UI CLASS
   const ui = new UI();
 
-  // budget form submit 
+  // budget form submit
   budgetForm.addEventListener('submit', function(event){
     event.preventDefault();
     ui.submitBudgetForm();
-    
+
   });
 
-  // saving form submit 
+  // saving form submit
   savingsForm.addEventListener('submit', function(event){
     event.preventDefault();
     ui.displaySavingsValue();
-    
+
   });
 
   //expense Form Submit
